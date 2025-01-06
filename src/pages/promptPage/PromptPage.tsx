@@ -61,8 +61,8 @@ export default function PromptPage() {
             try {
                 const res = await getStt(jobId);
                 if (res) {
-                    setInputString(res.data);
-                    console.log(res.data);
+                    setInputString(res.text);
+                    console.log(res.text);
                 }
             } catch (error) {
                 console.error("Error fetching STT:", error);
@@ -83,11 +83,11 @@ export default function PromptPage() {
                     const sttRes = await getStt(jobId);
                     if (sttRes && sttRes.data) {
                         // STT 결과를 state에 저장
-                        setInputString(sttRes.data);
+                        setInputString(sttRes.text);
 
                         // 요약 진행
                         const result = await summarizeText({
-                            message: sttRes.data, // 방금 받은 STT 데이터 사용
+                            message: sttRes.text, // 방금 받은 STT 데이터 사용
                             prompt: toSummerText
                         });
 
