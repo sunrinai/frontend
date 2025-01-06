@@ -62,6 +62,7 @@ export default function PromptPage() {
                 const res = await getStt(jobId);
                 if (res) {
                     setInputString(res.data);
+                    console.log(res.data);
                 }
             } catch (error) {
                 console.error("Error fetching STT:", error);
@@ -75,14 +76,29 @@ export default function PromptPage() {
 
         try {
             if (jobId) {
-                const res = await getJobStatus(jobId);
+                const statusRes = await getJobStatus(jobId);
 
-                if (res.status === "Processing") {
-                    const result = await summarizeText({ message: inputString, prompt: toSummerText });
-                    console.log(result);
-                    localStorage.setItem("result", result);
-                    setLoading(false);
-                    navigate("/resultPage");
+                if (statusRes.status === "Processing") {
+                    // STT 결과를 먼저 받아옴
+                    const sttRes = await getStt(jobId);
+                    if (sttRes && sttRes.data) {
+                        // STT 결과를 state에 저장
+                        setInputString(sttRes.data);
+
+                        // 요약 진행
+                        const result = await summarizeText({
+                            message: sttRes.data, // 방금 받은 STT 데이터 사용
+                            prompt: toSummerText
+                        });
+
+                        console.log("요약 결과:", result);
+                        localStorage.setItem("result", result);
+                        setLoading(false);
+                        navigate("/resultPage");
+                    } else {
+                        setLoading(false);
+                        alert("STT 결과를 받아오지 못했습니다.");
+                    }
                 } else {
                     setLoading(false);
                     alert("작업이 아직 준비되지 않았습니다. 다시 시도해주세요.");
@@ -90,7 +106,8 @@ export default function PromptPage() {
             }
         } catch (error) {
             setLoading(false);
-            console.error("Error summarizing text:", error);
+            console.error("Error in handleSummarize:", error);
+            alert("요약 과정에서 오류가 발생했습니다.");
         }
     };
 
