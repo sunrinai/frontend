@@ -1,21 +1,21 @@
-import talkerImage from "../../assets/talker.svg"
-import copyImage from "../../assets/copy.svg"
-import mdImage from "../../assets/md_file_icon_215056.svg"
-import styles from "./resultPage.module.scss"
+import React, { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import talkerImage from "../../assets/talker.svg";
+import copyImage from "../../assets/copy.svg";
+import mdImage from "../../assets/md_file_icon_215056.svg";
+import { getKeypoints, getJobStatus } from "../../feature/https.tsx";
+import { mdFileExport } from "./feature/mdFileExport.tsx";
 import Header from "../../components/Header.tsx";
-import {mdFileExport} from "./feature/mdFileExport.tsx";
-import {getKeypoints, getJobStatus} from "../../feature/https.tsx";
-import {motion} from "framer-motion";
-import {useRef, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import styles from "./resultPage.module.scss";
 
-export default function ResultPage() {
+const ResultPage = () => {
     const [fileUrl, setFileUrl] = useState("");
     const [resultText, setResultText] = useState("");
     const [loading, setLoading] = useState(true);
     const resultRef = useRef<HTMLDivElement>(null);
-    const imageRef = useRef<HTMLElement>(null);
-    const keyWordRef = useRef<HTMLElement>(null);
+    const imageRef = useRef<HTMLDivElement>(null);
+    const keyWordRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,7 +32,6 @@ export default function ResultPage() {
         try {
             const statusRes = await getJobStatus(jobId);
             if (statusRes.status === "Done") {
-                // 상태가 Done일 때만 결과를 로드
                 loadResults();
                 importImage();
                 setLoading(false);
@@ -58,6 +57,58 @@ export default function ResultPage() {
         setResultText(text);
     };
 
+    const formatImageUrl = (imagePath: string) => {
+        const pathParts = imagePath.split('//');
+        return `${baseUrl}/${pathParts[0]}/${pathParts[1]}`;
+    };
+
+    const importImage = async () => {
+        const jobId = localStorage.getItem("id");
+        if (!jobId) return;
+
+        try {
+            const imageres = await getKeypoints(jobId);
+            if (imageres && imageRef.current && keyWordRef.current) {
+                // Clear existing content
+                imageRef.current.innerHTML = '';
+
+                // Create image scroll container
+                const scrollContainer = document.createElement('div');
+                scrollContainer.className = styles.imageScroll;
+
+                // Add images
+                imageres.images.forEach((imagePath: string) => {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.className = styles.imageWrapper;
+
+                    const img = document.createElement('img');
+                    img.src = formatImageUrl(imagePath);
+                    img.alt = "Screenshot";
+
+                    imgWrapper.appendChild(img);
+                    scrollContainer.appendChild(imgWrapper);
+                });
+
+                imageRef.current.appendChild(scrollContainer);
+
+                // Render keywords
+                keyWordRef.current.innerHTML = '';
+                const ul = document.createElement('ul');
+                ul.className = styles.keywordContainer;
+
+                imageres.keypoints.forEach((keypoint: string) => {
+                    const li = document.createElement('li');
+                    li.textContent = keypoint;
+                    ul.appendChild(li);
+                });
+
+                keyWordRef.current.appendChild(ul);
+            }
+        } catch (error) {
+            console.error("Error importing image:", error);
+        }
+    };
+
     const mdFileDownload = () => {
         if (fileUrl) {
             const a = document.createElement("a");
@@ -70,47 +121,6 @@ export default function ResultPage() {
     const copyText = () => {
         window.navigator.clipboard.writeText(resultText);
         alert("Copied!");
-    };
-
-    const importImage = async () => {
-        const jobId = localStorage.getItem("id");
-        if (!jobId) return;
-
-        try {
-            const imageres = await getKeypoints(jobId);
-            if (imageres) {
-                // 이미지 렌더링
-                if (imageRef.current) {
-                    const imageContainer = imageRef.current;
-                    imageContainer.innerHTML = '';
-                    imageres.images.forEach((imagePath: string) => {
-                        const img = document.createElement('img');
-                        img.src = imagePath;
-                        img.alt = "Screenshot";
-                        img.className = styles.resultImage;
-                        imageContainer.appendChild(img);
-                    });
-                }
-
-                // 키포인트 렌더링
-                if (keyWordRef.current) {
-                    const keywordContainer = keyWordRef.current;
-                    keywordContainer.innerHTML = '';
-                    const ul = document.createElement('ul');
-                    ul.className = styles.keywordList;
-
-                    imageres.keypoints.forEach((keypoint: string) => {
-                        const li = document.createElement('li');
-                        li.textContent = keypoint;
-                        ul.appendChild(li);
-                    });
-
-                    keywordContainer.appendChild(ul);
-                }
-            }
-        } catch (error) {
-            console.error("Error importing image:", error);
-        }
     };
 
     if (loading) {
@@ -130,22 +140,40 @@ export default function ResultPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 1 }}
-                    src={talkerImage} alt="talker" />
+                    src={talkerImage}
+                    alt="talker"
+                />
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1, duration: 1 }}
-                    className={styles.resultTexts}>
+                    className={styles.resultTexts}
+                >
                     <div ref={imageRef}></div>
                     <div ref={keyWordRef}></div>
                     <p ref={resultRef}>{resultText}</p>
                     <div className={styles.foobar}>
-                        <img src={copyImage} alt="copy" width="30px" onClick={copyText} />
-                        <img src={mdImage} alt="notion" width="30px" onClick={mdFileDownload} />
-                        <p onClick={() => navigate("/promptPage")} className={styles.adsf}>돌아가기</p>
+                        <img
+                            src={copyImage}
+                            alt="copy"
+                            onClick={copyText}
+                        />
+                        <img
+                            src={mdImage}
+                            alt="notion"
+                            onClick={mdFileDownload}
+                        />
+                        <p
+                            onClick={() => navigate("/promptPage")}
+                            className={styles.adsf}
+                        >
+                            돌아가기
+                        </p>
                     </div>
                 </motion.div>
             </div>
         </div>
     );
-}
+};
+
+export default ResultPage;

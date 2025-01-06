@@ -15,6 +15,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  height: 700px;
+  overflow-y: auto;
   transform: translate(-50%, -50%) !important;
 }
 
@@ -25,21 +27,69 @@
   border: 1px solid white;
   position: relative;
   z-index: 1;
-  overflow: hidden; // 자식 요소가 영역을 벗어나지 않도록
+  overflow: hidden;
 
   p {
     color: white;
     margin: 10px;
-    height: calc(100% - 20px); // padding 고려
-    overflow-y: auto; // 긴 텍스트를 위한 스크롤
+    height: calc(100% - 20px);
+    overflow-y: auto;
+  }
+
+  .imageScroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px;
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #1a1a1a;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
+  }
+
+  .imageWrapper {
+    flex: 0 0 auto;
+
+    img {
+      width: auto;
+      height: 300px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+  }
+
+  .keywordContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+
+    li {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid #333;
+      font-size: 14px;
+    }
   }
 }
 
 .foobar {
   position: absolute;
   bottom: 0;
-  left: 0; // 추가: 정확한 위치 지정
-  width: 100%; // 변경: 부모 기준 전체 너비
+  left: 0;
+  width: 100%;
   display: flex;
   height: 500px;
   align-items: end;
@@ -55,39 +105,32 @@
     cursor: pointer;
     width: 30px;
     height: 30px;
-    transition: transform 0.2s ease; // 선택적: 호버 효과
+    transition: transform 0.2s ease;
 
     &:hover {
-      transform: scale(1.1); // 선택적: 호버시 살짝 커지는 효과
+      transform: scale(1.1);
     }
   }
 }
-.adsf{
+
+.adsf {
   height: 23px !important;
   margin: 0 !important;
+  color: white;
   text-align: center;
-  :hover{
-    cursor: pointer;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
     transform: scale(1.1);
   }
 }
 
-.resultImage {
-  width: 100%;
-  max-width: 500px;
-  margin: 10px 0;
-  border-radius: 8px;
-}
-
-.keywordList {
-  list-style: none;
-  padding: 0;
-  margin: 20px 0;
-
-  li {
-    margin: 8px 0;
-    padding: 8px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-  }
+.loading {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.2rem;
 }
