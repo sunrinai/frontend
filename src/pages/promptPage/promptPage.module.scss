@@ -1,0 +1,93 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  background: var(--backgrond-color);
+}
+
+.contents{
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 60px);
+  top: 60px;
+  justify-content: center;
+  align-items: center;
+  gap: 31px;
+  input[type="file"]{
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+  }
+}
+
+.prevVideo{
+  width: 70%;
+  height: 70%;
+  border-radius: 10px;
+  border: 1px solid #fff;
+}
+
+.buttonCon{
+  width: 70%;
+
+}
+
+.videoInputButton{
+  width: 201px;
+  height: 36px;
+  background: #ffffff;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.videoSkeleton{
+  width: 70%;
+  height: 70%;
+  background: #242424;
+  border-radius: 10px;
+  border: 1px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+
+}
+
+.promptCon{
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.promptInput{
+  width: calc(100% - 200px);
+  height: 40px;
+  background: none;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  outline: none;
+  :focus{
+    outline: none;
+    box-shadow: none;
+  }
+  color: white;
+  padding: 0 13px;
+}
+.promptInputButton{
+  width: 165px;
+  height: 40px;
+  background: #ffffff;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}

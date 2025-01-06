@@ -1,0 +1,35 @@
+.container{
+  width: 100vw;
+  height: 100vh;
+  background: var(--backgrond-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 50px;
+}
+.button {
+  width: 163px;
+  height: 57px;
+  background: white;
+  border-radius: 8px;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.button:hover{
+  cursor: pointer;
+}
+.content {
+  display: flex;
+  align-items: center;
+  font-size: 64px;
+  color: white;
+  font-weight: normal;
+}
+
+.content img {
+  margin-right: 22px; /* 이미지 오른쪽에 여백 추가 */
+}
