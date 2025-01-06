@@ -59,7 +59,7 @@ const ResultPage = () => {
 
     const formatImageUrl = (imagePath: string) => {
         const pathParts = imagePath.split('//');
-        return `${baseUrl}/${pathParts[0]}/${pathParts[1]}`;
+        return `http://129.146.2.28:81/${pathParts[0]}/${pathParts[1]}`;
     };
 
     const importImage = async () => {
